@@ -26,12 +26,12 @@ export class CreateOrganizationInviteUseCase {
 		private readonly sendOrganizationInviteEmailUseCase: SendOrganizationInviteEmailUseCase,
 	) {}
 
-	async execute(createOrganizationInviteDto: CreateOrganizationInviteDto): Promise<OrganizationInvite> {
+	async execute(organizationId: string, inviterId: string, createOrganizationInviteDto: CreateOrganizationInviteDto): Promise<OrganizationInvite> {
 		await this.getExistingOrganizationInviteUseCase.execute(
 			{
 				where: {
 					email: createOrganizationInviteDto.email,
-					organization_id: createOrganizationInviteDto.organization_id,
+					organization_id: organizationId,
 					status: INVITE_STATUS.PENDING,
 				},
 			},
@@ -50,7 +50,7 @@ export class CreateOrganizationInviteUseCase {
 				{
 					where: {
 						user_id: user.id,
-						organization_id: createOrganizationInviteDto.organization_id,
+						organization_id: organizationId,
 						active: true,
 					},
 				},
@@ -59,7 +59,7 @@ export class CreateOrganizationInviteUseCase {
 		}
 
 		const organization = await this.getExistingOrganizationUseCase.execute({
-			where: { id: createOrganizationInviteDto.organization_id },
+			where: { id: organizationId },
 		});
 
 		const expirationDate = new Date();
@@ -72,6 +72,8 @@ export class CreateOrganizationInviteUseCase {
 		try {
 			const organizationInvite = queryRunner.manager.create(OrganizationInvite, {
 				...createOrganizationInviteDto,
+				organization_id: organizationId,
+				inviter_id: inviterId,
 				expiration_date: expirationDate,
 				status: INVITE_STATUS.PENDING,
 			});

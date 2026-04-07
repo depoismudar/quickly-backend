@@ -18,9 +18,9 @@ export class CreateOrganizationMemberUseCase {
 		private readonly getExistingUserUseCase: GetExistingUserUseCase,
 	) {}
 
-	async execute(createOrganizationMemberDto: CreateOrganizationMemberDto): Promise<OrganizationMember> {
+	async execute(organizationId: string, createOrganizationMemberDto: CreateOrganizationMemberDto): Promise<OrganizationMember> {
 		const [organization, user] = await Promise.all([
-			this.getExistingOrganizationUseCase.execute({ where: { id: createOrganizationMemberDto.organization_id } }),
+			this.getExistingOrganizationUseCase.execute({ where: { id: organizationId } }),
 			this.getExistingUserUseCase.execute({ where: { id: createOrganizationMemberDto.user_id } }),
 		]);
 

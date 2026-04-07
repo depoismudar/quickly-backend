@@ -1,5 +1,5 @@
 import { Body, Controller, Inject, Post } from '@nestjs/common';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { ApiTags } from '@nestjs/swagger';
 import { ActiveOrganizationId } from '@/modules/auth/shared/decorators/active-organization-id.decorator';
 import { Roles } from '@/modules/auth/shared/decorators/roles.decorator';
 import { TenantScoped } from '@/modules/auth/shared/decorators/tenant-scoped.decorator';
@@ -10,7 +10,6 @@ import { CreateOrganizationAddressUseCase } from './create-organization-address.
 import { CreateOrganizationAddressDocs } from './docs';
 
 @ApiTags('Organization Addresses')
-@ApiBearerAuth()
 @TenantScoped()
 @Controller('organization-addresses')
 export class CreateOrganizationAddressController {
@@ -26,9 +25,6 @@ export class CreateOrganizationAddressController {
 		@ActiveOrganizationId() organizationId: string,
 		@Body() createOrganizationAddressDto: CreateOrganizationAddressDto,
 	): Promise<OrganizationAddress> {
-		return await this.createOrganizationAddressUseCase.execute({
-			...createOrganizationAddressDto,
-			organization_id: organizationId,
-		});
+		return await this.createOrganizationAddressUseCase.execute(organizationId, createOrganizationAddressDto);
 	}
 }

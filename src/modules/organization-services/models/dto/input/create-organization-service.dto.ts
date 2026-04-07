@@ -2,11 +2,6 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { IsBoolean, IsNotEmpty, IsNumber, IsOptional, IsPositive, IsString, IsUUID, Min } from 'class-validator';
 
 export class CreateOrganizationServiceDto {
-	@IsUUID()
-	@IsNotEmpty()
-	@ApiProperty({ description: 'The organization ID' })
-	organization_id: string;
-
 	@IsString()
 	@IsNotEmpty()
 	@ApiProperty({ description: 'The name of the service' })

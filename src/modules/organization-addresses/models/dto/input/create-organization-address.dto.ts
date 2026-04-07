@@ -1,12 +1,7 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsNotEmpty, IsOptional, IsString, IsUUID, Length } from 'class-validator';
+import { IsNotEmpty, IsOptional, IsString, Length } from 'class-validator';
 
 export class CreateOrganizationAddressDto {
-	@IsUUID()
-	@IsNotEmpty()
-	@ApiProperty({ description: 'The organization ID' })
-	organization_id: string;
-
 	@IsString()
 	@IsNotEmpty()
 	@ApiProperty({ description: 'The postal code (CEP)' })

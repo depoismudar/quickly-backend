@@ -1,5 +1,5 @@
 import { Body, Controller, Inject, Post } from '@nestjs/common';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { ApiTags } from '@nestjs/swagger';
 import { ActiveOrganizationId } from '@/modules/auth/shared/decorators/active-organization-id.decorator';
 import { Roles } from '@/modules/auth/shared/decorators/roles.decorator';
 import { TenantScoped } from '@/modules/auth/shared/decorators/tenant-scoped.decorator';
@@ -10,7 +10,6 @@ import { CreateServiceCategoryUseCase } from './create-service-category.use-case
 import { CreateServiceCategoryDocs } from './docs';
 
 @ApiTags('Service Categories')
-@ApiBearerAuth()
 @TenantScoped()
 @Controller('service-categories')
 export class CreateServiceCategoryController {
@@ -23,9 +22,6 @@ export class CreateServiceCategoryController {
 	@Roles(OrganizationRole.OWNER)
 	@CreateServiceCategoryDocs()
 	async execute(@ActiveOrganizationId() organizationId: string, @Body() createServiceCategoryDto: CreateServiceCategoryDto): Promise<ServiceCategory> {
-		return await this.createServiceCategoryUseCase.execute({
-			...createServiceCategoryDto,
-			organization_id: organizationId,
-		});
+		return await this.createServiceCategoryUseCase.execute(organizationId, createServiceCategoryDto);
 	}
 }

@@ -11,8 +11,11 @@ export class CreateOrganizationAddressUseCase {
 		private readonly organizationAddressesRepository: OrganizationAddressesRepositoryInterface,
 	) {}
 
-	async execute(createOrganizationAddressDto: CreateOrganizationAddressDto): Promise<OrganizationAddress> {
-		const organizationAddress = this.organizationAddressesRepository.create(createOrganizationAddressDto);
+	async execute(organizationId: string, createOrganizationAddressDto: CreateOrganizationAddressDto): Promise<OrganizationAddress> {
+		const organizationAddress = this.organizationAddressesRepository.create({
+			...createOrganizationAddressDto,
+			organization_id: organizationId,
+		});
 		await this.organizationAddressesRepository.save(organizationAddress);
 
 		return organizationAddress;

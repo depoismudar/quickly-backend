@@ -5,11 +5,6 @@ import { OrganizationRole } from '@/shared/constants/organization-roles';
 export class CreateOrganizationMemberDto {
 	@IsUUID()
 	@IsNotEmpty()
-	@ApiProperty({ description: 'The organization ID' })
-	organization_id: string;
-
-	@IsUUID()
-	@IsNotEmpty()
 	@ApiProperty({ description: 'The user ID' })
 	user_id: string;
 

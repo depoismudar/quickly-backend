@@ -1,5 +1,5 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsNotEmpty, IsOptional, IsString, IsUUID } from 'class-validator';
+import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
 import { IsOrganizationSlug } from '@/shared/decorators/is-organization-slug.decorator';
 
 export class CreateOrganizationDto {
@@ -24,8 +24,4 @@ export class CreateOrganizationDto {
 	@ApiPropertyOptional({ description: 'The logo path of the organization' })
 	logo?: string;
 
-	@IsUUID()
-	@IsNotEmpty()
-	@ApiProperty({ description: 'The owner user ID of the organization' })
-	owner_id: string;
 }

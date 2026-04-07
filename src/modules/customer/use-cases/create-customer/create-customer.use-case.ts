@@ -17,7 +17,7 @@ export class CreateCustomerUseCase {
 		private readonly getExistingCustomerUseCase: GetExistingCustomerUseCase,
 	) {}
 
-	async execute(createCustomerDto: CreateCustomerDto): Promise<Customer> {
+	async execute(organizationId: string, createCustomerDto: CreateCustomerDto): Promise<Customer> {
 		if (createCustomerDto.user_id) {
 			await this.getExistingUserUseCase.execute({ where: { id: createCustomerDto.user_id } });
 		}
@@ -26,13 +26,16 @@ export class CreateCustomerUseCase {
 			{
 				where: {
 					email: createCustomerDto.email,
-					organization_id: createCustomerDto.organization_id,
+					organization_id: organizationId,
 				},
 			},
 			{ throwIfFound: true },
 		);
 
-		const customer = this.customersRepository.create(createCustomerDto);
+		const customer = this.customersRepository.create({
+			...createCustomerDto,
+			organization_id: organizationId,
+		});
 
 		return await this.customersRepository.save(customer);
 	}

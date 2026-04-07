@@ -20,14 +20,14 @@ export class CreateOrganizationServiceUseCase {
 		private readonly validateDurationUseCase: ValidateDurationUseCase,
 	) {}
 
-	async execute(createOrganizationServiceDto: CreateOrganizationServiceDto): Promise<OrganizationService> {
+	async execute(organizationId: string, createOrganizationServiceDto: CreateOrganizationServiceDto): Promise<OrganizationService> {
 		await this.getExistingOrganizationUseCase.execute({
-			where: { id: createOrganizationServiceDto.organization_id },
+			where: { id: organizationId },
 		});
 
 		if (createOrganizationServiceDto.service_category_id) {
 			await this.getExistingServiceCategoryUseCase.execute({
-				where: { id: createOrganizationServiceDto.service_category_id, organization_id: createOrganizationServiceDto.organization_id },
+				where: { id: createOrganizationServiceDto.service_category_id, organization_id: organizationId },
 			});
 		}
 
@@ -35,6 +35,7 @@ export class CreateOrganizationServiceUseCase {
 
 		const organizationService = this.organizationServicesRepository.create({
 			...createOrganizationServiceDto,
+			organization_id: organizationId,
 			active: createOrganizationServiceDto.active ?? true,
 		});
 

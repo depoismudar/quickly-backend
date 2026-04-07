@@ -14,12 +14,15 @@ export class CreateServiceCategoryUseCase {
 		private readonly getExistingOrganizationUseCase: GetExistingOrganizationUseCase,
 	) {}
 
-	async execute(createServiceCategoryDto: CreateServiceCategoryDto): Promise<ServiceCategory> {
+	async execute(organizationId: string, createServiceCategoryDto: CreateServiceCategoryDto): Promise<ServiceCategory> {
 		await this.getExistingOrganizationUseCase.execute({
-			where: { id: createServiceCategoryDto.organization_id },
+			where: { id: organizationId },
 		});
 
-		const serviceCategory = this.serviceCategoriesRepository.create(createServiceCategoryDto);
+		const serviceCategory = this.serviceCategoriesRepository.create({
+			...createServiceCategoryDto,
+			organization_id: organizationId,
+		});
 		await this.serviceCategoriesRepository.save(serviceCategory);
 
 		return serviceCategory;

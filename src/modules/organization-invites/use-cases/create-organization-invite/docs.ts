@@ -8,7 +8,7 @@ export function CreateOrganizationInviteDocs() {
 		ApiOperation({
 			summary: 'Create a new organization invite',
 			description:
-				'Creates a unique invite with a 7-day validity period. The invite ID (UUID) will be used as a unique identifier. A user can only have 1 active invite per organization. It is not possible to invite a user who is already a member of the organization. The invited user does not need to have an account in the system yet - they can create one when accepting the invite. An email will be automatically sent to the invitee with the acceptance link.',
+				'Creates a unique invite with a 7-day validity period. The invite ID (UUID) will be used as a unique identifier. A user can only have 1 active invite per organization. It is not possible to invite a user who is already a member of the organization. The invited user does not need to have an account in the system yet - they can create one when accepting the invite. Organization and inviter are resolved from the authenticated context.',
 		}),
 		ApiBody({
 			type: CreateOrganizationInviteDto,

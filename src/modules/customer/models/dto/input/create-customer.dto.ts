@@ -2,11 +2,6 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { IsEmail, IsNotEmpty, IsOptional, IsPhoneNumber, IsString, IsUUID } from 'class-validator';
 
 export class CreateCustomerDto {
-	@IsUUID()
-	@IsNotEmpty()
-	@ApiProperty({ description: 'The organization ID' })
-	organization_id: string;
-
 	@IsString()
 	@IsNotEmpty()
 	@ApiProperty({ description: 'The customer name' })

@@ -1,5 +1,5 @@
 import { Body, Controller, Inject, Post } from '@nestjs/common';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { ApiTags } from '@nestjs/swagger';
 import { ActiveOrganizationId } from '@/modules/auth/shared/decorators/active-organization-id.decorator';
 import { TenantScoped } from '@/modules/auth/shared/decorators/tenant-scoped.decorator';
 import { CreateCustomerDto } from '../../models/dto/input/create-customer.dto';
@@ -8,7 +8,6 @@ import { CreateCustomerUseCase } from './create-customer.use-case';
 import { CreateCustomerDocs } from './docs';
 
 @ApiTags('Customers')
-@ApiBearerAuth()
 @TenantScoped()
 @Controller('customers')
 export class CreateCustomerController {
@@ -20,9 +19,6 @@ export class CreateCustomerController {
 	@Post()
 	@CreateCustomerDocs()
 	async execute(@ActiveOrganizationId() organizationId: string, @Body() createCustomerDto: CreateCustomerDto): Promise<Customer> {
-		return await this.createCustomerUseCase.execute({
-			...createCustomerDto,
-			organization_id: organizationId,
-		});
+		return await this.createCustomerUseCase.execute(organizationId, createCustomerDto);
 	}
 }

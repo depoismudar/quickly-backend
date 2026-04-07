@@ -53,8 +53,7 @@ export class AcceptOrganizationInviteUseCase {
 		if (existingOrganizationMember) {
 			await this.activateOrganizationMemberUseCase.execute(existingOrganizationMember.id);
 		} else {
-			await this.createOrganizationMemberUseCase.execute({
-				organization_id: invite.organization_id,
+			await this.createOrganizationMemberUseCase.execute(invite.organization_id, {
 				user_id: userId,
 				role: OrganizationRole.PROFESSIONAL,
 			});

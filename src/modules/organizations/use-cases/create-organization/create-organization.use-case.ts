@@ -19,7 +19,7 @@ export class CreateOrganizationUseCase {
 		private readonly getExistingOrganizationUseCase: GetExistingOrganizationUseCase,
 	) {}
 
-	async execute(createOrganizationDto: CreateOrganizationDto): Promise<Organization> {
+	async execute(createOrganizationDto: CreateOrganizationDto, ownerId: string): Promise<Organization> {
 		const organizationSlug = new OrganizationSlug(createOrganizationDto.slug);
 		const normalizedSlug = organizationSlug.getValue();
 
@@ -36,9 +36,8 @@ export class CreateOrganizationUseCase {
 		});
 		await this.organizationsRepository.save(organization);
 
-		await this.createOrganizationMemberUseCase.execute({
-			organization_id: organization.id,
-			user_id: createOrganizationDto.owner_id,
+		await this.createOrganizationMemberUseCase.execute(organization.id, {
+			user_id: ownerId,
 			role: OrganizationRole.OWNER,
 		});
 

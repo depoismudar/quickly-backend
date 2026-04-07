@@ -8,7 +8,7 @@ export function CreateOrganizationDocs() {
 		ApiOperation({
 			summary: 'Create a new organization',
 			description:
-				'Creates a new organization with name, description, logo and owner_id. The creator (owner_id) is automatically added as a member of the organization.',
+				'Creates a new organization with name, description and logo. The authenticated user is automatically set as owner and added as a member of the organization.',
 		}),
 		ApiBody({
 			type: CreateOrganizationDto,

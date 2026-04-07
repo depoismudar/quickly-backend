@@ -7,7 +7,8 @@ export function CreateCustomerDocs() {
 	return applyDecorators(
 		ApiOperation({
 			summary: 'Create a new customer',
-			description: 'Creates a new customer for an organization. The customer can be anonymous (without user_id) or linked to an existing user.',
+			description:
+				'Creates a new customer for the active organization in the authenticated context. The customer can be anonymous (without user_id) or linked to an existing user.',
 		}),
 		ApiBody({
 			type: CreateCustomerDto,
