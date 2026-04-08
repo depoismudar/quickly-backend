@@ -33,4 +33,29 @@ export class OrganizationInvitesRepository extends Repository<OrganizationInvite
 			total_pages,
 		};
 	}
+
+	async findAllPaginatedByInvitedUserId(userId: string, paginationDto: PaginationDto): Promise<PaginatedResponseDto<OrganizationInvite>> {
+		const { page = 1, limit = 10 } = paginationDto;
+		const skip = (page - 1) * limit;
+
+		const queryBuilder = this.createQueryBuilder('organization_invite')
+			.leftJoinAndSelect('organization_invite.inviter', 'inviter')
+			.leftJoinAndSelect('organization_invite.organization', 'organization')
+			.where('organization_invite.invited_user_id = :userId', { userId })
+			.skip(skip)
+			.take(limit)
+			.orderBy('organization_invite.created_at', 'DESC');
+
+		const [data, total] = await queryBuilder.getManyAndCount();
+
+		const total_pages = Math.ceil(total / limit);
+
+		return {
+			data,
+			page,
+			limit,
+			total,
+			total_pages,
+		};
+	}
 }

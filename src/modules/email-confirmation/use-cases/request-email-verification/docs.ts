@@ -1,16 +1,11 @@
 import { HttpStatus, applyDecorators } from '@nestjs/common';
-import { ApiBody, ApiOperation, ApiResponse } from '@nestjs/swagger';
-import { VerifyEmailDto } from '../../models/dto/input/verify-email.dto';
+import { ApiOperation, ApiResponse } from '@nestjs/swagger';
 
-export function VerifyEmailDocs() {
+export function RequestEmailVerificationDocs() {
 	return applyDecorators(
 		ApiOperation({
 			summary: 'Request email verification',
-			description: 'Sends a 6-digit OTP code to verify the user email. The code expires in 15 minutes.',
-		}),
-		ApiBody({
-			type: VerifyEmailDto,
-			description: 'User ID',
+			description: 'Sends a 6-digit OTP code to verify the logged in user email. The code expires in 15 minutes.',
 		}),
 		ApiResponse({
 			status: HttpStatus.OK,

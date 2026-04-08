@@ -74,6 +74,7 @@ export class CreateOrganizationInviteUseCase {
 				...createOrganizationInviteDto,
 				organization_id: organizationId,
 				inviter_id: inviterId,
+				invited_user_id: user?.id ?? null,
 				expiration_date: expirationDate,
 				status: INVITE_STATUS.PENDING,
 			});

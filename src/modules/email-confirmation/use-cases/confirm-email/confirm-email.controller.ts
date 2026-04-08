@@ -1,5 +1,7 @@
 import { Body, Controller, Inject, Post } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
+import { SessionUser } from '@/modules/auth/models/interfaces/session-user.interface';
+import { CurrentUser } from '@/modules/auth/shared/decorators/current-user.decorator';
 import { ValidateEmailConfirmationOtpDto } from '../../models/dto/input/validate-email-confirmation-otp.dto';
 import { ConfirmEmailUseCase } from './confirm-email.use-case';
 import { ConfirmEmailDocs } from './docs';
@@ -14,8 +16,10 @@ export class ConfirmEmailController {
 
 	@Post('confirm')
 	@ConfirmEmailDocs()
-	async execute(@Body() validateEmailConfirmationOtpDto: ValidateEmailConfirmationOtpDto): Promise<{ message: string }> {
-		await this.confirmEmailUseCase.execute(validateEmailConfirmationOtpDto);
-		return { message: 'Email confirmado com sucesso.' };
+	async execute(
+		@CurrentUser() currentUser: SessionUser,
+		@Body() validateEmailConfirmationOtpDto: ValidateEmailConfirmationOtpDto,
+	): Promise<{ message: string }> {
+		return await this.confirmEmailUseCase.execute(currentUser.userId, validateEmailConfirmationOtpDto);
 	}
 }

@@ -6,6 +6,7 @@ import { EmailAlreadyInUseException } from '../../errors/email-already-in-use.er
 import { SameEmailError } from '../../errors/same-email-error.error';
 import type { CreateEmailConfirmationDto } from '../../models/dto/input/create-email-confirmation.dto';
 import type { RequestEmailChangeDto } from '../../models/dto/input/request-email-change.dto';
+import { EmailConfirmationTemplateType } from '../../models/dto/input/send-email-confirmation-email.dto';
 import type { EmailConfirmationRepositoryInterface } from '../../models/interfaces/email-confirmation-repository.interface';
 import { EMAIL_CONFIRMATION_REPOSITORY_INTERFACE_KEY } from '../../shared/constants/email-confirmation-repository-interface-key';
 import { EMAIL_CONFIRMATION_STATUS } from '../../shared/interfaces/email-confirmation-status';
@@ -34,10 +35,10 @@ export class RequestEmailChangeUseCase {
 		private readonly sendEmailConfirmationEmailUseCase: SendEmailConfirmationEmailUseCase,
 	) {}
 
-	async execute(requestEmailChangeDto: RequestEmailChangeDto): Promise<void> {
+	async execute(userId: string, requestEmailChangeDto: RequestEmailChangeDto): Promise<void> {
 		// 1. Validate User Exists and has a verified email
 		const user = await this.getExistingUserWithVerifiedEmailUseCase.execute({
-			where: { id: requestEmailChangeDto.userId },
+			where: { id: userId },
 		});
 
 		// 2. Validate New Email is Different from Current Email
@@ -58,7 +59,7 @@ export class RequestEmailChangeUseCase {
 		}
 
 		// 4. Check Attempts
-		await this.checkEmailConfirmationAttemptsUseCase.execute(user.id);
+		await this.checkEmailConfirmationAttemptsUseCase.execute(user.id, EMAIL_CONFIRMATION_TYPE.CHANGE_EMAIL);
 
 		// 5. Invalidate Pending Confirmations
 		const existingConfirmation = await this.getExistingEmailConfirmationUseCase.execute(
@@ -100,6 +101,8 @@ export class RequestEmailChangeUseCase {
 			await this.sendEmailConfirmationEmailUseCase.execute({
 				email: user.email,
 				otpCode: emailConfirmation.otp_code,
+				templateType: EmailConfirmationTemplateType.EMAIL_CHANGE_REQUEST,
+				newEmail: requestEmailChangeDto.newEmail,
 			});
 		} catch (error) {
 			throw new HttpException(error.message, HttpStatus.BAD_REQUEST);

@@ -13,17 +13,17 @@ import { GetExistingEmailConfirmationUseCase } from './use-cases/get-existing-em
 import { MarkEmailConfirmationAsValidatedUseCase } from './use-cases/mark-email-confirmation-as-validated/mark-email-confirmation-as-validated.use-case';
 import { RequestEmailChangeController } from './use-cases/request-email-change/request-email-change.controller';
 import { RequestEmailChangeUseCase } from './use-cases/request-email-change/request-email-change.use-case';
+import { RequestEmailVerificationController } from './use-cases/request-email-verification/request-email-verification.controller';
+import { RequestEmailVerificationUseCase } from './use-cases/request-email-verification/request-email-verification.use-case';
 import { SendEmailConfirmationEmailUseCase } from './use-cases/send-email-confirmation-email/send-email-confirmation-email.use-case';
 import { UpdateEmailConfirmationUseCase } from './use-cases/update-email-confirmation/update-email-confirmation.use-case';
 import { ValidateEmailConfirmationExpirationUseCase } from './use-cases/validate-email-confirmation-expiration/validate-email-confirmation-expiration.use-case';
 import { ValidateEmailConfirmationOtpController } from './use-cases/validate-email-confirmation-otp/validate-email-confirmation-otp.controller';
 import { ValidateEmailConfirmationOtpUseCase } from './use-cases/validate-email-confirmation-otp/validate-email-confirmation-otp.use-case';
-import { VerifyEmailController } from './use-cases/verify-email/verify-email.controller';
-import { VerifyEmailUseCase } from './use-cases/verify-email/verify-email.use-case';
 
 @Module({
 	imports: [TypeOrmModule.forFeature([EmailConfirmation]), EmailModule, UsersModule],
-	controllers: [VerifyEmailController, RequestEmailChangeController, ValidateEmailConfirmationOtpController, ConfirmEmailController],
+	controllers: [RequestEmailVerificationController, RequestEmailChangeController, ValidateEmailConfirmationOtpController, ConfirmEmailController],
 	providers: [
 		{
 			provide: EMAIL_CONFIRMATION_REPOSITORY_INTERFACE_KEY,
@@ -41,12 +41,12 @@ import { VerifyEmailUseCase } from './use-cases/verify-email/verify-email.use-ca
 		UpdateEmailConfirmationUseCase,
 		ValidateEmailConfirmationExpirationUseCase,
 		ValidateEmailConfirmationOtpUseCase,
-		VerifyEmailUseCase,
+		RequestEmailVerificationUseCase,
 	],
 	exports: [
 		EMAIL_CONFIRMATION_REPOSITORY_INTERFACE_KEY,
 		GetExistingEmailConfirmationUseCase,
-		VerifyEmailUseCase,
+		RequestEmailVerificationUseCase,
 		RequestEmailChangeUseCase,
 		ConfirmEmailUseCase,
 	],

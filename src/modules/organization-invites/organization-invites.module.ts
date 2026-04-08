@@ -19,6 +19,8 @@ import { GetOrganizationInviteByIdController } from './use-cases/get-organizatio
 import { GetOrganizationInviteByIdUseCase } from './use-cases/get-organization-invite-by-id/get-organization-invite-by-id.use-case';
 import { ListOrganizationInvitesByOrganizationController } from './use-cases/list-organization-invites-by-organization/list-organization-invites-by-organization.controller';
 import { ListOrganizationInvitesByOrganizationUseCase } from './use-cases/list-organization-invites-by-organization/list-organization-invites-by-organization.use-case';
+import { ListReceivedOrganizationInvitesController } from './use-cases/list-received-organization-invites/list-received-organization-invites.controller';
+import { ListReceivedOrganizationInvitesUseCase } from './use-cases/list-received-organization-invites/list-received-organization-invites.use-case';
 import { RejectOrganizationInviteController } from './use-cases/reject-organization-invite/reject-organization-invite.controller';
 import { RejectOrganizationInviteUseCase } from './use-cases/reject-organization-invite/reject-organization-invite.use-case';
 import { SendOrganizationInviteEmailUseCase } from './use-cases/send-organization-invite-email/send-organization-invite-email.use-case';
@@ -31,6 +33,7 @@ import { SendOrganizationInviteEmailUseCase } from './use-cases/send-organizatio
 		RejectOrganizationInviteController,
 		CancelOrganizationInviteController,
 		ListOrganizationInvitesByOrganizationController,
+		ListReceivedOrganizationInvitesController,
 		GetOrganizationInviteByIdController,
 	],
 	providers: [
@@ -48,6 +51,7 @@ import { SendOrganizationInviteEmailUseCase } from './use-cases/send-organizatio
 		RejectOrganizationInviteUseCase,
 		CancelOrganizationInviteUseCase,
 		ListOrganizationInvitesByOrganizationUseCase,
+		ListReceivedOrganizationInvitesUseCase,
 		SendOrganizationInviteEmailUseCase,
 	],
 	exports: [ORGANIZATION_INVITE_REPOSITORY_INTERFACE_KEY],

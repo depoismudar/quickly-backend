@@ -7,11 +7,11 @@ export function RequestEmailChangeDocs() {
 		ApiOperation({
 			summary: 'Request email change',
 			description:
-				'Sends a 6-digit OTP code to the current email address to confirm the email change request. The code expires in 15 minutes. After validation, the user email will be updated to the new email. This security measure prevents fraud by requiring confirmation from the current email.',
+				'Sends a 6-digit OTP code to the old email address to confirm the email change request. The code expires in 15 minutes. After validation, the user email will be updated to the new email. This security measure prevents fraud by requiring confirmation from the current email.',
 		}),
 		ApiBody({
 			type: RequestEmailChangeDto,
-			description: 'User ID and new email address',
+			description: 'New email address',
 		}),
 		ApiResponse({
 			status: HttpStatus.OK,

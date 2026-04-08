@@ -20,8 +20,8 @@ export class UpdateUserUseCase {
 		return await this.usersRepository.update(user.id, {
 			name: updateUserDto.name,
 			phone: updateUserDto.phone,
-			email: user.email,
-			email_verified: user.email_verified,
+			email: updateUserDto.email,
+			email_verified: updateUserDto.email_verified,
 		});
 	}
 }

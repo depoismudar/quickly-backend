@@ -1,9 +1,12 @@
 import { Controller, Inject, Param, Patch } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiCookieAuth, ApiTags } from '@nestjs/swagger';
+import { SessionUser } from '@/modules/auth/models/interfaces/session-user.interface';
+import { CurrentUser } from '@/modules/auth/shared/decorators/current-user.decorator';
 import { RejectOrganizationInviteDocs } from './docs';
 import { RejectOrganizationInviteUseCase } from './reject-organization-invite.use-case';
 
 @ApiTags('Organization Invites')
+@ApiCookieAuth()
 @Controller('organization-invites')
 export class RejectOrganizationInviteController {
 	constructor(
@@ -13,7 +16,7 @@ export class RejectOrganizationInviteController {
 
 	@Patch(':id/reject')
 	@RejectOrganizationInviteDocs()
-	async execute(@Param('id') id: string): Promise<void> {
-		return await this.rejectOrganizationInviteUseCase.execute(id);
+	async execute(@Param('id') id: string, @CurrentUser() currentUser: SessionUser): Promise<void> {
+		return await this.rejectOrganizationInviteUseCase.execute(id, currentUser.userId);
 	}
 }

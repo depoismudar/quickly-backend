@@ -13,7 +13,7 @@ export class RejectOrganizationInviteUseCase {
 		private readonly getExistingOrganizationInviteUseCase: GetExistingOrganizationInviteUseCase,
 	) {}
 
-	async execute(id: string): Promise<void> {
+	async execute(id: string, userId: string): Promise<void> {
 		const invite = await this.getExistingOrganizationInviteUseCase.execute({
 			where: { id },
 		});
@@ -22,6 +22,6 @@ export class RejectOrganizationInviteUseCase {
 			throw new BadRequestException('Convite não está mais pendente.');
 		}
 
-		await this.organizationInvitesRepository.update(invite.id, { status: INVITE_STATUS.REFUSED });
+		await this.organizationInvitesRepository.update(invite.id, { invited_user_id: invite.invited_user_id ?? userId, status: INVITE_STATUS.REFUSED });
 	}
 }

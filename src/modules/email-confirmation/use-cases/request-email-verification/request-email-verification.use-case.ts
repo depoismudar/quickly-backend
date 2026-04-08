@@ -3,7 +3,7 @@ import { GetExistingUserUseCase } from '@/modules/users/use-cases/get-existing-u
 import { OtpCode } from '@/shared/value-objects/otp-code';
 import { EmailAlreadyVerifiedException } from '../../errors/email-already-verified.error';
 import type { CreateEmailConfirmationDto } from '../../models/dto/input/create-email-confirmation.dto';
-import type { VerifyEmailDto } from '../../models/dto/input/verify-email.dto';
+import { EmailConfirmationTemplateType } from '../../models/dto/input/send-email-confirmation-email.dto';
 import type { EmailConfirmationRepositoryInterface } from '../../models/interfaces/email-confirmation-repository.interface';
 import { EMAIL_CONFIRMATION_REPOSITORY_INTERFACE_KEY } from '../../shared/constants/email-confirmation-repository-interface-key';
 import { EMAIL_CONFIRMATION_STATUS } from '../../shared/interfaces/email-confirmation-status';
@@ -14,7 +14,7 @@ import { SendEmailConfirmationEmailUseCase } from '../send-email-confirmation-em
 import { UpdateEmailConfirmationUseCase } from '../update-email-confirmation/update-email-confirmation.use-case';
 
 @Injectable()
-export class VerifyEmailUseCase {
+export class RequestEmailVerificationUseCase {
 	constructor(
 		@Inject(EMAIL_CONFIRMATION_REPOSITORY_INTERFACE_KEY)
 		private readonly emailConfirmationRepository: EmailConfirmationRepositoryInterface,
@@ -30,10 +30,10 @@ export class VerifyEmailUseCase {
 		private readonly sendEmailConfirmationEmailUseCase: SendEmailConfirmationEmailUseCase,
 	) {}
 
-	async execute(verifyEmailDto: VerifyEmailDto): Promise<void> {
+	async execute(userId: string): Promise<void> {
 		// 1. Validate User Exists
 		const user = await this.getExistingUserUseCase.execute({
-			where: { id: verifyEmailDto.userId },
+			where: { id: userId },
 		});
 
 		// 2. Check if email is already verified
@@ -42,7 +42,7 @@ export class VerifyEmailUseCase {
 		}
 
 		// 3. Check Attempts
-		await this.checkEmailConfirmationAttemptsUseCase.execute(user.id);
+		await this.checkEmailConfirmationAttemptsUseCase.execute(user.id, EMAIL_CONFIRMATION_TYPE.VERIFY_EMAIL);
 
 		// 4. Invalidate Pending Confirmations
 		const existingConfirmation = await this.getExistingEmailConfirmationUseCase.execute(
@@ -83,6 +83,7 @@ export class VerifyEmailUseCase {
 			await this.sendEmailConfirmationEmailUseCase.execute({
 				email: user.email,
 				otpCode: emailConfirmation.otp_code,
+				templateType: EmailConfirmationTemplateType.EMAIL_VERIFICATION,
 			});
 		} catch (error) {
 			throw new HttpException(error.message, HttpStatus.BAD_REQUEST);

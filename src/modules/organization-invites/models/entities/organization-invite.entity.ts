@@ -7,6 +7,7 @@ import { INVITE_STATUS } from '../../shared/interfaces/invite-status';
 @Entity('organization_invites')
 // Acelera listagem de convites por organização e status.
 @Index(['organization_id', 'status'])
+@Index(['invited_user_id', 'status'])
 // Evita corrida concorrente criando mais de um convite pendente para o mesmo email na mesma organização.
 @Index(['organization_id', 'email'], { unique: true, where: `"status" = 'PENDING'` })
 export class OrganizationInvite extends TimestampedEntity {
@@ -18,6 +19,9 @@ export class OrganizationInvite extends TimestampedEntity {
 
 	@Column({ name: 'email' })
 	email: string;
+
+	@Column({ name: 'invited_user_id', nullable: true })
+	invited_user_id: string | null;
 
 	@Column({ name: 'expiration_date', type: 'timestamp with time zone' })
 	expiration_date: Date;
@@ -32,4 +36,8 @@ export class OrganizationInvite extends TimestampedEntity {
 	@ManyToOne(() => User)
 	@JoinColumn({ name: 'inviter_id' })
 	inviter: User;
+
+	@ManyToOne(() => User, { nullable: true })
+	@JoinColumn({ name: 'invited_user_id' })
+	invited_user: User | null;
 }

@@ -17,13 +17,14 @@ export class ValidateEmailConfirmationOtpUseCase {
 		private readonly validateEmailConfirmationExpirationUseCase: ValidateEmailConfirmationExpirationUseCase,
 	) {}
 
-	async execute(validateEmailConfirmationOtpDto: ValidateEmailConfirmationOtpDto): Promise<{ valid: boolean }> {
+	async execute(userId: string, validateEmailConfirmationOtpDto: ValidateEmailConfirmationOtpDto): Promise<{ valid: boolean }> {
 		const otpCode = new OtpCode(validateEmailConfirmationOtpDto.otp_code);
 
 		// First, find the confirmation by OTP code
 		const emailConfirmation = await this.getExistingEmailConfirmationUseCase.execute(
 			{
 				where: {
+					user_id: userId,
 					otp_code: otpCode.getValue(),
 					status: EMAIL_CONFIRMATION_STATUS.PENDING,
 				},

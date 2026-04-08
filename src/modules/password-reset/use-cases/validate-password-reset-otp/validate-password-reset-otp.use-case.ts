@@ -1,5 +1,6 @@
 import { BadRequestException, Inject, Injectable } from '@nestjs/common';
 import { GetExistingUserUseCase } from '@/modules/users/use-cases/get-existing-user/get-existing-user.use-case';
+import { UpdateUserUseCase } from '@/modules/users/use-cases/update-user/update-user.use-case';
 import { generatePasswordResetToken } from '@/shared/helpers/password-reset-token.helper';
 import { OtpCode } from '@/shared/value-objects/otp-code';
 import type { ValidatePasswordResetOtpDto } from '../../models/dto/input/validate-password-reset-otp.dto';
@@ -12,6 +13,8 @@ export class ValidatePasswordResetOtpUseCase {
 	constructor(
 		@Inject(GetExistingUserUseCase)
 		private readonly getExistingUserUseCase: GetExistingUserUseCase,
+		@Inject(UpdateUserUseCase)
+		private readonly updateUserUseCase: UpdateUserUseCase,
 		@Inject(GetExistingPasswordResetUseCase)
 		private readonly getExistingPasswordResetUseCase: GetExistingPasswordResetUseCase,
 		@Inject(ValidatePasswordResetExpirationUseCase)
@@ -47,6 +50,10 @@ export class ValidatePasswordResetOtpUseCase {
 		}
 
 		await this.validatePasswordResetExpirationUseCase.execute(passwordReset);
+
+		if (!user.email_verified) {
+			await this.updateUserUseCase.execute(user.id, { email_verified: true });
+		}
 
 		const reset_token = generatePasswordResetToken({
 			userId: user.id,

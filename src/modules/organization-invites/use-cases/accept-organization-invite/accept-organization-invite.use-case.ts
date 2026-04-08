@@ -2,6 +2,8 @@ import { Inject, Injectable } from '@nestjs/common';
 import { ActivateOrganizationMemberUseCase } from '@/modules/organization-members/use-cases/activate-organization-member/activate-organization-member.use-case';
 import { CreateOrganizationMemberUseCase } from '@/modules/organization-members/use-cases/create-organization-member/create-organization-member.use-case';
 import { GetExistingOrganizationMemberUseCase } from '@/modules/organization-members/use-cases/get-existing-organization-member/get-existing-organization-member.use-case';
+import { EmailNotVerifiedException } from '@/modules/users/errors/email-not-verified.error';
+import { GetExistingUserUseCase } from '@/modules/users/use-cases/get-existing-user/get-existing-user.use-case';
 import { OrganizationRole } from '@/shared/constants/organization-roles';
 import { InvalidOrganizationInviteException } from '../../errors/invalid-organization-invite.error';
 import type { OrganizationInvitesRepositoryInterface } from '../../models/interfaces/repository.interface';
@@ -22,6 +24,8 @@ export class AcceptOrganizationInviteUseCase {
 		private readonly getExistingOrganizationInviteUseCase: GetExistingOrganizationInviteUseCase,
 		@Inject(ActivateOrganizationMemberUseCase)
 		private readonly activateOrganizationMemberUseCase: ActivateOrganizationMemberUseCase,
+		@Inject(GetExistingUserUseCase)
+		private readonly getExistingUserUseCase: GetExistingUserUseCase,
 	) {}
 
 	async execute(id: string, userId: string): Promise<{ message: string }> {
@@ -38,6 +42,12 @@ export class AcceptOrganizationInviteUseCase {
 		if (expirationDate < new Date()) {
 			await this.organizationInvitesRepository.update(invite.id, { status: INVITE_STATUS.EXPIRED });
 			throw new InvalidOrganizationInviteException('Convite expirado.');
+		}
+
+		const user = await this.getExistingUserUseCase.execute({ where: { id: userId, email: invite.email } });
+
+		if (!user.email_verified) {
+			throw new EmailNotVerifiedException('Você precisa verificar seu email antes de aceitar o convite.');
 		}
 
 		const existingOrganizationMember = await this.getExistingOrganizationMemberUseCase.execute(
@@ -59,7 +69,7 @@ export class AcceptOrganizationInviteUseCase {
 			});
 		}
 
-		await this.organizationInvitesRepository.update(invite.id, { status: INVITE_STATUS.ACCEPTED });
+		await this.organizationInvitesRepository.update(invite.id, { invited_user_id: invite.invited_user_id ?? userId, status: INVITE_STATUS.ACCEPTED });
 
 		return { message: 'Convite aceito com sucesso. Usuário vinculado à organização.' };
 	}
