@@ -1,5 +1,7 @@
 import { HttpStatus, applyDecorators } from '@nestjs/common';
 import { ApiBody, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { getExceptionResponseSchema } from '@/shared/helpers/exception-response-schema.helper';
+import { AlreadyLoggedInOrganizationException } from '../../errors/already-logged-in-organization.error';
 import { SwitchOrganizationDto } from '../../models/dto/input/switch-organization.dto';
 import { SessionUserDto } from '../../models/dto/output/session-user.dto';
 
@@ -26,5 +28,6 @@ export function SwitchOrganizationDocs() {
 			status: HttpStatus.UNAUTHORIZED,
 			description: 'User not authenticated.',
 		}),
+		ApiResponse(getExceptionResponseSchema(AlreadyLoggedInOrganizationException, [], { description: 'Você já está logado nesta organização.' })),
 	);
 }

@@ -1,6 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import type { Request } from 'express';
 import { GetExistingOrganizationMemberUseCase } from '@/modules/organization-members/use-cases/get-existing-organization-member/get-existing-organization-member.use-case';
+import { AlreadyLoggedInOrganizationException } from '../../errors/already-logged-in-organization.error';
 import { NotMemberOfOrganizationException } from '../../errors/not-member-of-organization.error';
 import type { SwitchOrganizationDto } from '../../models/dto/input/switch-organization.dto';
 import type { SessionUser } from '../../models/interfaces/session-user.interface';
@@ -29,6 +30,10 @@ export class SwitchOrganizationUseCase {
 
 		if (!membership) {
 			throw new NotMemberOfOrganizationException();
+		}
+
+		if (request.session.activeOrganizationId === membership.organization_id) {
+			throw new AlreadyLoggedInOrganizationException();
 		}
 
 		request.session.activeOrganizationId = membership.organization_id;
