@@ -10,18 +10,7 @@ export function ListOrganizationAddressesDocs() {
 			summary: 'List all organization addresses',
 			description: 'Returns a paginated list with all registered organization addresses. Can be filtered by organization_id.',
 		}),
-		ApiQuery({
-			name: 'page',
-			required: false,
-			type: Number,
-			description: 'Page number (default: 1)',
-		}),
-		ApiQuery({
-			name: 'limit',
-			required: false,
-			type: Number,
-			description: 'Number of items per page (default: 10)',
-		}),
+
 		ApiQuery({
 			name: 'organization_id',
 			required: false,

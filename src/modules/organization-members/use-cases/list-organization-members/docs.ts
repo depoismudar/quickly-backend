@@ -10,18 +10,7 @@ export function ListOrganizationMembersDocs() {
 			summary: 'List all organization members',
 			description: 'Returns a paginated list with all organization members. Can be filtered by active/inactive status.',
 		}),
-		ApiQuery({
-			name: 'page',
-			required: false,
-			type: Number,
-			description: 'Page number (default: 1)',
-		}),
-		ApiQuery({
-			name: 'limit',
-			required: false,
-			type: Number,
-			description: 'Number of items per page (default: 10)',
-		}),
+
 		ApiQuery({
 			name: 'is_active',
 			required: false,
