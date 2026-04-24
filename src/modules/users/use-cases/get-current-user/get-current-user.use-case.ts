@@ -8,12 +8,12 @@ import { GetExistingUserUseCase } from '../get-existing-user/get-existing-user.u
 
 export interface GetCurrentUserInput {
 	user_id: string;
-	organization_id: string;
+	organization_id: string | null;
 }
 
 export type UserWithActiveTenantContext = User & {
 	medias: Media[];
-	currentOrganization: Organization;
+	currentOrganization: Organization | null;
 };
 
 @Injectable()
@@ -30,17 +30,12 @@ export class GetCurrentUserUseCase {
 	async execute(input: GetCurrentUserInput): Promise<UserWithActiveTenantContext> {
 		const user = await this.getExistingUserUseCase.execute({ where: { id: input.user_id } });
 
-		const currentOrganization = await this.getExistingOrganizationUseCase.execute({
-			where: { id: input.organization_id },
-		});
+		if (!input.organization_id) {
+			return Object.assign(user, { medias: [], currentOrganization: null }) as UserWithActiveTenantContext;
+		}
 
-		const medias = await this.listMediaUseCase.execute({
-			where: {
-				user_id: input.user_id,
-				organization_id: input.organization_id,
-			},
-			order: { created_at: 'DESC' },
-		});
+		const currentOrganization = await this.getExistingOrganizationUseCase.execute({ where: { id: input.organization_id } });
+		const medias = await this.listMediaUseCase.execute({ where: { user_id: input.user_id, organization_id: input.organization_id }, order: { created_at: 'DESC' } });
 
 		return Object.assign(user, { medias, currentOrganization }) as UserWithActiveTenantContext;
 	}
